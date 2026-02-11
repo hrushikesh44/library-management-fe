@@ -1,25 +1,58 @@
 import axios from 'axios';
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
+import { parseJwt } from '../services/jwtParser';
+import type { Role } from '../auth/auth.types';
 
-const Login = () => {
-  const usernameRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
+const LoginPage = () => {
+    const usernameRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
+    const navigate = useNavigate();
+    const {login} = useAuth()
 
-  async function login() {
+async function loginHandler() {
+  try {
     const username = usernameRef.current?.value;
     const password = passwordRef.current?.value;
 
-    const res = await axios.post("http://localhost:3000/auth/signup", {
+    if (!username || !password) {
+      alert('Username and password required');
+      return;
+    }
+
+    const res = await axios.post('http://localhost:3000/auth/login', {
       username,
       password,
     });
 
-    const jwt = res.data.access_token;
-    localStorage.setItem('Aunthorisation', jwt);
-    navigate('/profile');
+    const { access_token } = res.data;
+
+    login(`Bearer ${access_token}`)
+
+    const payload = parseJwt(access_token);
+    const roles = payload.roles as Role[];
+
+     if (roles.includes('admin')) {
+      navigate('/admin');
+    } else if (roles.includes('librarian')) {
+      navigate('/librarian');
+    } else {
+      navigate('/dashboard');
+    }
+
+    // window.location.reload();
+    // navigate('/dashboard');
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      console.log(err.response?.data?.message || 'Login failed');
+    } else {
+      console.log('Unexpected error');
+    }
   }
+}
+
+
 
   return (
     <div className="h-screen flex items-center justify-center">
@@ -50,14 +83,14 @@ const Login = () => {
               ref={passwordRef}
             />
             </div>
-            <div
-              onClick={() => login()}
-              className="flex flex-col pt-5 text-lg font-medium w-full"
-            >
-              <button className="p-2.5 cursor-pointer border border-white/10 rounded-md bg-neutral-900 shadow-md hover:scale-105 transition duration-300 text-neutral-200">
-                Login
-              </button>
-            </div>
+            <button
+                type="button"
+                onClick={loginHandler}
+                className="p-2.5 cursor-pointer border border-white/10 rounded-md bg-neutral-900 shadow-md hover:scale-105 transition duration-300 text-neutral-200 w-full"
+                >
+              Login
+            </button>
+
             <p className="text-neutral-600 text-[18px] font-normal mx-auto pt-2">
               Don't have an account?{' '}
               <a
@@ -72,4 +105,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

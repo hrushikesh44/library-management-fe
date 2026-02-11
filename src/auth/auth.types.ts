@@ -1,12 +1,8 @@
-export type Role = "ADMIN" | "LIBRARIAN" | "USER";
+export type Role = 'user' | 'librarian' | 'admin';
 
-export interface User {
-  id: number;
+export interface AuthUser {
+  userId: number;
   username: string;
-  role: Role;
+  roles: Role[];
 }
 
-export interface AuthContextType {
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
-}

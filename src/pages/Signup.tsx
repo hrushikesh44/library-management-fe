@@ -3,23 +3,33 @@ import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export function Signup () {
-  const usernameRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
+    const usernameRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
+    const navigate = useNavigate();
 
-  async function login() {
+async function login() {
+  try {
     const username = usernameRef.current?.value;
     const password = passwordRef.current?.value;
 
-    const res = await axios.post("http://localhost:3000/auth/login", {
-      username,
-      password,
-    });
+    if (!username || !password) {
+      alert('Username and password required');
+      return;
+    }
 
-    const jwt = res.data.token;
-    localStorage.setItem('token', jwt);
-    navigate('/profile');
-  }
+    await axios.post(
+      'http://localhost:3000/auth/signup',
+      {
+        username,
+        password,
+      }
+    );
+
+    navigate('/login');
+  } catch (err: any) {
+    alert(err.response?.data?.message || 'Login failed');
+  } 
+}
 
   return (
     <div className="h-screen flex items-center justify-center">
