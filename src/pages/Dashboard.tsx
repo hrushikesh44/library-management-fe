@@ -15,11 +15,11 @@ export function Dashboard() {
         <LibrarianDashboard/>
       )}
 
-      {roles.includes('user') && (
-        <div className="p-4 bg-neutral-900 rounded-md text-neutral-200">
+      {/* {roles.includes('user') && (
+        <div className="p-4 bg-neutral-900 rounded-md text-neutral-200 w-fit">
           Browse & Rent Books
         </div>
-      )}
+      )} */}
     </div>
   );
 }

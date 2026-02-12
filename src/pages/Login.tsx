@@ -28,19 +28,20 @@ async function loginHandler() {
 
     const { access_token } = res.data;
 
-    login(`Bearer ${access_token}`)
+    login(`${access_token}`)
 
-    const payload = parseJwt(access_token);
-    const roles = payload.roles as Role[];
+    // const payload = parseJwt(access_token);
+    // const roles = payload.roles as Role[];
 
-     if (roles.includes('admin')) {
-      navigate('/admin');
-    } else if (roles.includes('librarian')) {
-      navigate('/librarian');
-    } else {
-      navigate('/dashboard');
-    }
+    //  if (roles.includes('admin')) {
+    //   navigate('/books');
+    // } else if (roles.includes('librarian')) {
+    //   navigate('/books');
+    // } else {
+    //   navigate('/dashboard');
+    // }
 
+    navigate('/books')
     // window.location.reload();
     // navigate('/dashboard');
   } catch (err) {
